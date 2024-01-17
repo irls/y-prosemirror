@@ -1,47 +1,12 @@
 import { updateYFragment } from './plugins/sync-plugin.js' // eslint-disable-line
-import { ySyncPluginKey } from './plugins/keys.js'
 import * as Y from 'yjs'
-import { EditorView } from 'prosemirror-view' // eslint-disable-line
 import { Node, Schema } from 'prosemirror-model' // eslint-disable-line
 import * as error from 'lib0/error'
-import * as map from 'lib0/map'
-import * as eventloop from 'lib0/eventloop'
 
 /**
  * Either a node if type is YXmlElement or an Array of text nodes if YXmlText
  * @typedef {Map<Y.AbstractType, Node | Array<Node>>} ProsemirrorMapping
  */
-
-/**
- * Is null if no timeout is in progress.
- * Is defined if a timeout is in progress.
- * Maps from view
- * @type {Map<EditorView, Map<any, any>>|null}
- */
-let viewsToUpdate = null
-
-const updateMetas = () => {
-  const ups = /** @type {Map<EditorView, Map<any, any>>} */ (viewsToUpdate)
-  viewsToUpdate = null
-  ups.forEach((metas, view) => {
-    const tr = view.state.tr
-    const syncState = ySyncPluginKey.getState(view.state)
-    if (syncState && syncState.binding && !syncState.binding.isDestroyed) {
-      metas.forEach((val, key) => {
-        tr.setMeta(key, val)
-      })
-      view.dispatch(tr)
-    }
-  })
-}
-
-export const setMeta = (view, key, value) => {
-  if (!viewsToUpdate) {
-    viewsToUpdate = new Map()
-    eventloop.timeout(0, updateMetas)
-  }
-  map.setIfUndefined(viewsToUpdate, view, map.create).set(key, value)
-}
 
 /**
  * Transforms a Prosemirror based absolute position to a Yjs Cursor (relative position in the Yjs model).

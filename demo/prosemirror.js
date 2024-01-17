@@ -2,7 +2,7 @@
 
 import * as Y from 'yjs'
 import { WebrtcProvider } from 'y-webrtc'
-import { ySyncPlugin, yCursorPlugin, yUndoPlugin, undo, redo } from '../src/y-prosemirror.js'
+import { ySyncPlugin, yUndoPlugin, undo, redo } from '../src/y-prosemirror.js'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { schema } from './schema.js'
@@ -23,7 +23,6 @@ window.addEventListener('load', () => {
       schema,
       plugins: [
         ySyncPlugin(type),
-        yCursorPlugin(provider.awareness),
         yUndoPlugin(),
         keymap({
           'Mod-z': undo,
